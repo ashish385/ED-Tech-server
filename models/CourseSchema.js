@@ -30,7 +30,7 @@ const courseSchema = new mongoose.Schema({
     price: {
         type: Number,
     },
-    thumbnails: {
+    thumbnail: {
         type: String,
     },
     tag: {

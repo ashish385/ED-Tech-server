@@ -180,7 +180,7 @@ exports.login = async (req, res) => {
                 id: user._id,
                 accountType:user.accountType,
             }
-            const token = jwt.sign(otpPayload, process.env.JWT_SECRET, {
+            const token = jwt.sign(payload, process.env.JWT_SECRET, {
                 expiresIn:"2h",
             })
             user.token = token;
