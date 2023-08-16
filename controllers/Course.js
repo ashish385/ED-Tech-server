@@ -1,18 +1,19 @@
 const Course = require("../models/CourseSchema");
-const Tag = require("../models/TagsSchema");
+const Category = require("../models/CategorySchema");
 const User = require("../models/UserModel");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
 exports.createCourse = async (req, res) => {
     try {
         // fetch data
-        const { courseName, courseDescription, whatYouWillLearn, price, tag } = req.body;
+        const { courseName, courseDescription, whatYouWillLearn, price, tags, category } = req.body;
+        // category = ObjectId
 
         // get thumbnail
         const thumbnail = req.files.thumbnailImage;
 
         // validation
-        if (!courseName || !courseDescription || !whatYouWillLearn || !price || !tag || !thumbnail) {
+        if (!courseName || !courseDescription || !whatYouWillLearn || !price ||!tags || !category || !thumbnail) {
             return res.status(400).json({
                 success: false,
                 message: "All field are required!"
@@ -33,9 +34,9 @@ exports.createCourse = async (req, res) => {
         }
         
         // tag validate tag = objectId
-        const tagDetails = await Tag.findById(tag)
+        const categoryDetails = await Category.findById(tag)
 
-        if (!tagDetails) {
+        if (!categoryDetails) {
             return res.status(404).json({
                 success: false,
                 message: "Tag Details not found!"
@@ -52,13 +53,14 @@ exports.createCourse = async (req, res) => {
             instructor: instructorDetails._id,
             whatYouWillLearn: whatYouWillLearn,
             price,
-            tag: tagDetails._id,
+            tags:tags,
+            category: categoryDetails._id,
             thumbnail: thumbnailImage.secure_url,
         })
 
         // update user -> add new course to the user schema of instructor
         // first parameter use for search by id , second paramete update the course,
-        // and new user for return updated array
+        // and new use for return updated array
         await User.findByIdAndUpdate({ _id: instructorDetails._id },
             {
                 $push: newCourse._id
@@ -67,9 +69,9 @@ exports.createCourse = async (req, res) => {
         );
 
         // update tag Schema
-        await Tag.findByIdAndUpdate({ _id: tagDetails._id },
+        await Category.findByIdAndUpdate({ _id: categoryDetails._id },
             {
-                $push: newCourse.tag
+                $push: newCourse.category
             },
             { new: true },
         );
@@ -97,6 +99,7 @@ exports.showAllCourses = async (req, res) => {
             courseName: true,
             courseDescription: true,
             price: true,
+            tags:true,
             thumbnails: true,
             ratingAndReviews: true,
             studentEnrolled: true
