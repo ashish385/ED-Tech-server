@@ -6,14 +6,14 @@ const { uploadImageToCloudinary } = require("../utils/imageUploader");
 exports.createCourse = async (req, res) => {
     try {
         // fetch data
-        const { courseName, courseDescription, whatYouWillLearn, price, tags, category } = req.body;
+        const { courseName, courseDescription, whatYouWillLearn, price, tags, category,benifitsOfTheCourse, requirementsOrInstructions } = req.body;
         // category = ObjectId
 
         // get thumbnail
         const thumbnail = req.files.thumbnailImage;
 
         // validation
-        if (!courseName || !courseDescription || !whatYouWillLearn || !price ||!tags || !category || !thumbnail) {
+        if (!courseName || !courseDescription || !whatYouWillLearn || !price ||!tags || !category || !thumbnail, !benifitsOfTheCourse || !requirementsOrInstructions) {
             return res.status(400).json({
                 success: false,
                 message: "All field are required!"
@@ -56,6 +56,8 @@ exports.createCourse = async (req, res) => {
             tags:tags,
             category: categoryDetails._id,
             thumbnail: thumbnailImage.secure_url,
+            benifitsOfTheCourse: benifitsOfTheCourse,
+            requirementsOrInstructions:requirementsOrInstructions
         })
 
         // update user -> add new course to the user schema of instructor
@@ -102,7 +104,9 @@ exports.showAllCourses = async (req, res) => {
             tags:true,
             thumbnails: true,
             ratingAndReviews: true,
-            studentEnrolled: true
+            studentEnrolled: true,
+            benifitsOfTheCourse: true,
+            requirementsOrInstructions:true
         })
             .populate("Instructor")
             .exec();
