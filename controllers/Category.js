@@ -51,3 +51,12 @@ exports.showAllCategory = async (req, res) => {
         })
     }
 }
+
+// category page details
+exports.categoryPageDetails = async (req, res) => {
+    try {
+        // get Category id
+    } catch (error) {
+        
+    }
+}
