@@ -1,42 +1,35 @@
-const Category = require("../models/CategorySchema");
+const Category = require("../models/Category");
 
-// create tag ka handle function
+// create category ka handle function
 exports.createCategory = async (req, res) => {
-    try {
-        // fetch data 
-        const { name, description } = req.body;
-
-        // validation
-        if (!name || !description) {
-            return res.status(400).json({
-                success: false,
-                message:"All fiel required",
-            })
-        }
-
-        // create entery in db
-        const tagDetails = await Category.create({
-            name: name,
-            description:description
-        })
-        console.log(tagDetails);
-
-        // return response
-        res.status(200).json({
-            success: true,
-            message:"Tag created successfully!"
-        })
-
+	try {
+		const { name, description } = req.body;
+		if (!name) {
+			return res
+				.status(400)
+				.json({ success: false, message: "All fields are required" });
+		}
+		const CategorysDetails = await Category.create({
+			name: name,
+			description: description,
+		});
+		console.log(CategorysDetails);
+		return res.status(200).json({
+			success: true,
+            message: "Categorys Created Successfully",
+            categoryPageDetails:categoryPageDetails,
+		});
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message:error.message
-        })
-    }
-}
-
+        console.log(error);
+        console.log("err",error.message);
+		return res.status(500).json({
+			success: true,
+			message: error.message,
+		});
+	}
+};
 // get all categories handler function
-exports.showAllCategory = async (req, res) => {
+exports.showAllCategories = async (req, res) => {
     try {
         const allCategory = await Category.find({}, { name: true, description: true });
         res.status(200).json({

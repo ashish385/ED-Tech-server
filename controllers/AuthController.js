@@ -1,11 +1,11 @@
 const bcrypt = require("bcrypt");
-const User = require("../models/UserModel");
+const User = require("../models/User");
 const OTP = require("../models/OTP");
 const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
 const mailSender = require("../utils/mailSender");
 const { passwordUpdated } = require("../mail/templets/passwordUpdate");
-const Profile = require("../models/ProfileSchema");
+const Profile = require("../models/Profile");
 require("dotenv").config();
 
 
@@ -55,24 +55,22 @@ exports.signup = async (req, res) => {
             })
         }
 
-        // fint most recent OTP stored for user
-        const recentOTP = await OTP.findOne({ email }).sort({ createdAt: -1 }).limit(1);
-        console.log("recent otp: ", recentOTP);
-        
-        // validate OTP
-        if (recentOTP.length == 0) {
-            // OTP not found
-            return res.status(400).json({
-                success: false,
-                message:"OTP not found!"
-            })
-        } else if (otp !== recentOTP.otp) {
-            // Invalid OTP
-            return res.status(400).json({
-                success: false,
-                message:"OTP not found!"
-            })
-        }
+        // first most recent OTP stored for user
+        const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
+		console.log("response",response);
+		if (response.length === 0) {
+			// OTP not found for the email
+			return res.status(400).json({
+				success: false,
+				message: "The OTP is not valid",
+			});
+		} else if (otp !== response[0].otp) {
+			// Invalid OTP
+			return res.status(400).json({
+				success: false,
+				message: "The OTP is not valid!",
+			});
+		}
 
         // password hashed
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -98,9 +96,10 @@ exports.signup = async (req, res) => {
             lastName,
             email,
             password: hashedPassword,
-            contactNumber,
-            accountType,
-            additionalDetails: profileDetails,
+			contactNumber,
+			approved:approved,
+            accountType:accountType,
+            additionalDetails: profileDetails.id,
             image:`https://api.dicebear.com/6.x/initials/svg?seed=${firstName} ${lastName}`
         })
         
@@ -111,10 +110,11 @@ exports.signup = async (req, res) => {
             user,
         })
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
         return res.status(500).json({
             success: false,
             message: "User can't be registered, Please try again! ",
+            error: error.message,
         })
     }
 }
@@ -143,7 +143,7 @@ exports.login = async (req, res) => {
         // Generate JWT token and Compare Password
 		if (await bcrypt.compare(password, user.password)) {
 			const token = jwt.sign(
-				{ email: user.email, id: user._id, role: user.role },
+				{ email: user.email, id: user._id, accountType: user.accountType },
 				process.env.JWT_SECRET,
 				{
 					expiresIn: "24h",
@@ -174,6 +174,7 @@ exports.login = async (req, res) => {
         
     } catch (error) {
          console.log(error);
+         console.log(error.message);
         return res.status(500).json({
             success: false,
             message: "Login failure, Please try again! ",
@@ -183,7 +184,7 @@ exports.login = async (req, res) => {
 
 
 // send otp
-exports.senOTP = async (req, res) => {
+exports.sendOTP = async (req, res) => {
     try {
         // fetch email from request ki body
         const { email } = req.body;

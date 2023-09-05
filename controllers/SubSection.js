@@ -1,5 +1,5 @@
-const SubSection = require('../models/SubSectionSchema');
-const Section = require('../models/SubSectionSchema');
+const SubSection = require('../models/SubSection');
+const Section = require('../models/SubSection');
 const { fileUploadToCloudinary } = require('../utils/fileUploader');
 
 
