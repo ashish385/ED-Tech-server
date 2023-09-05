@@ -1,5 +1,5 @@
 const SubSection = require('../models/SubSection');
-const Section = require('../models/SubSection');
+const Section = require('../models/Section');
 const { fileUploadToCloudinary } = require('../utils/fileUploader');
 
 
@@ -8,18 +8,19 @@ exports.createSubSection = async (req, res) => {
     try {
       // Extract necessary information from the request body
       const { sectionId, title, description } = req.body
-      const video = req.files.video
+      const video = req.files.videoFile
+      // console.log(req.body,"+",video);
   
       // Check if all necessary fields are provided
       if (!sectionId || !title || !description || !video) {
         return res
           .status(404)
-          .json({ success: false, message: "All Fields are Required" })
+          .json({ success: false, message: "All Fields are Required!" })
       }
       console.log(video)
   
       // Upload the video file to Cloudinary
-      const uploadDetails = await uploadImageToCloudinary(
+      const uploadDetails = await fileUploadToCloudinary(
         video,
         process.env.FOLDER_NAME
       )
@@ -38,6 +39,8 @@ exports.createSubSection = async (req, res) => {
         { $push: { subSection: SubSectionDetails._id } },
         { new: true }
       ).populate("subSection")
+
+      // console.log("updatedSection",updatedSection);
   
       // Return the updated section in the response
       return res.status(200).json({ success: true, data: updatedSection })
