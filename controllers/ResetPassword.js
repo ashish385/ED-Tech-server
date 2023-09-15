@@ -12,7 +12,7 @@ exports.resetPasswordToken = async (req, res) => {
 		if (!user) {
 			return res.json({
 				success: false,
-				message: `This Email: ${email} is not Registered With Us Enter a Valid Email `,
+				message: ` ${email} is not Registered With Us Enter a Valid Email `,
 			});
 		}
 		const token = crypto.randomBytes(20).toString("hex");
