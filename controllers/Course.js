@@ -21,7 +21,10 @@ exports.createCourse = async (req, res) => {
 		} = req.body;
 
 		// Get thumbnail image from request files
-		const thumbnail = req.files.thumbnailImage;
+		const thumbnail = req.files.thumbnail;
+
+		console.log("body", req.body);
+		console.log("thumbnail",thumbnail);
 
 		// Check if any of the required fields are missing
 		if (
@@ -29,7 +32,7 @@ exports.createCourse = async (req, res) => {
 			!courseDescription ||
 			!whatYouWillLearn ||
 			!price ||
-			!tag ||
+			// !tag ||
 			!thumbnail ||
 			!category
 		) {
@@ -80,7 +83,7 @@ exports.createCourse = async (req, res) => {
 			instructor: instructorDetails._id,
 			whatYouWillLearn: whatYouWillLearn,
 			price,
-			tag: tag,
+			// tag: tag,
 			category: categoryDetails._id,
 			thumbnail: thumbnailImage.secure_url,
 			status: status,

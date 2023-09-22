@@ -2,14 +2,26 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../models/User")
 // auth
-exports.auth = async (req, res,next) => {
+exports.auth = async (req, res, next) => {
+        //extract token
+        const tokens = req.cookies.token 
+                        || req.body.token 
+                        || req.header("Authorization").replace("Bearer", "");
+
+    // console.log("token",tokens);
     try {
         // check json web token
         // console.log(req.cookies.token);
         // extract token
-        const token = await req.cookies.token || req.body || req.header("Authorisation").replace("Bearer ", "");
+         console.log("BEFORE ToKEN EXTRACTION");
+        //extract token
+        const token = req.cookies.token 
+                        || req.body.token 
+                        || req.header("Authorization").replace("Bearer ", "");
+        console.log("AFTER ToKEN EXTRACTION");
 
         // if token is missing , then return response
+        // console.log("auth-token",token);
         if (!token) {
             return res.status(401).json({
                 success: false,
@@ -26,7 +38,7 @@ exports.auth = async (req, res,next) => {
             // verification - issue
             console.log(error);
 		console.log(error.message);
-            return res.status(401).json({
+            return res.status(402).json({
                 success: false,
                 message:'token is missing'
             })
@@ -62,7 +74,8 @@ exports.isStudent = async (req, res,next) => {
 }
 
 // isInstructor
-exports.isInstructor = async (req, res,next) => {
+exports.isInstructor = async (req, res, next) => {
+    console.log("instructor");
     try {
         if (req.user.accountType !== "Instructor") {
             return res.status(401).json({

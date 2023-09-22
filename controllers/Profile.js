@@ -6,7 +6,7 @@ const {fileUploadToCloudinary} = require("../utils/fileUploader")
 
 exports.updateProfile = async (req, res) => {
 	try {
-		const { dateOfBirth = "", about = "", contactNumber } = req.body;
+		const { dateOfBirth = "", about = "", contactNumber,gender } = req.body;
 		const id = req.user.id;
 
 		// Find the profile by id
@@ -17,6 +17,11 @@ exports.updateProfile = async (req, res) => {
 		profile.dateOfBirth = dateOfBirth;
 		profile.about = about;
 		profile.contactNumber = contactNumber;
+		profile.gender = gender;
+
+		const updatedUserDetails = {
+			image: userDetails.image,
+		}
 
 		// Save the updated profile
 		await profile.save();
@@ -25,6 +30,7 @@ exports.updateProfile = async (req, res) => {
 			success: true,
 			message: "Profile updated successfully",
 			profile,
+			updatedUserDetails
 		});
 	} catch (error) {
 		console.log(error);
@@ -91,6 +97,7 @@ exports.getAllUserDetails = async (req, res) => {
 exports.updateDisplayPicture = async (req, res) => {
     try {
 		const displayPicture = req.files.displayPicture;
+		console.log("image file",displayPicture);
 		const userId = req.user.id;
 		console.log(userId);
       const image = await fileUploadToCloudinary(
@@ -138,7 +145,8 @@ exports.getEnrolledCourses = async (req, res) => {
         success: true,
         data: userDetails.courses,
       })
-    } catch (error) {
+	} catch (error) {
+		console.log("error",error.message);
       return res.status(500).json({
         success: false,
         message: error.message,
