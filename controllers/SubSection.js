@@ -10,7 +10,7 @@ exports.createSubSection = async (req, res) => {
       // Extract necessary information from the request body
       const { sectionId, title, description } = req.body
       const video = req.files.video
-      console.log(req.body,"+",video,"file",req.files);
+      console.log(req.body,"+",video,"file",req.files.video);
   
       // Check if all necessary fields are provided
       if (!sectionId || !title || !description || !video) {
@@ -32,7 +32,7 @@ exports.createSubSection = async (req, res) => {
         timeDuration: `${uploadDetails.duration}`,
         description: description,
         videoUrl: uploadDetails.secure_url,
-      })
+      });
   
       // Update the corresponding section with the newly created sub-section
       const updatedSection = await Section.findByIdAndUpdate(
