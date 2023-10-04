@@ -10,6 +10,7 @@ const {
   paymentSuccessEmail,
 } = require("../mail/templets/paymentSuccessfullEmail");
 const crypto = require("crypto");
+const CourseProgress = require("../models/CourseProgress");
 
 //capture the payment and initiate the Razorpay order
 exports.capturePayment = async (req, res) => {
@@ -160,6 +161,12 @@ const enrolledStudent = async (courses, userId, res) => {
           .status(500)
           .json({ success: false, message: "course not found!" });
       }
+
+      const courseProgress = await CourseProgress.create({
+        courseId: courseId,
+        userId: userId,
+        completedVideos:[],
+      })
 
       // find the student and add the course to their list of enrolled courses
       const enrolledStudent = await User.findByIdAndUpdate(

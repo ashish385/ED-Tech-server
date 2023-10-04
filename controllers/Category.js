@@ -33,12 +33,12 @@ exports.createCategory = async (req, res) => {
 };
 // get all categories handler function
 exports.showAllCategories = async (req, res) => {
-  console.log("showAllCategories");
+  // console.log("showAllCategories");
   try {
-    console.log("INSIDE SHOW ALL CATEGORIES");
+    // console.log("INSIDE SHOW ALL CATEGORIES");
     const allCategorys = await Category.find({});
 
-    console.log("allCategory", allCategorys);
+    // console.log("allCategory", allCategorys);
     res.status(200).json({
       success: true,
       data: allCategorys,
@@ -53,10 +53,10 @@ exports.showAllCategories = async (req, res) => {
 
 // category page details
 exports.categoryPageDetails = async (req, res) => {
-  console.log("categoryPageDetails", req.body);
+  // console.log("categoryPageDetails", req.body);
   try {
     const { categoryId } = req.body;
-    console.log("PRINTING CATEGORY ID: ", categoryId);
+    // console.log("PRINTING CATEGORY ID: ", categoryId);
     // Get courses for the specified category
     const selectedCategory = await Category.findById(categoryId)
       .populate({
@@ -66,7 +66,7 @@ exports.categoryPageDetails = async (req, res) => {
       })
       .exec();
 
-    console.log("SELECTED COURSE", selectedCategory);
+    // console.log("SELECTED COURSE", selectedCategory);
     // Handle the case when the category is not found
     if (!selectedCategory) {
       console.log("Category not found.");

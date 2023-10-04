@@ -36,6 +36,9 @@ const {
   deleteSubSection,
 } = require("../controllers/SubSection");
 
+// Update Course Progress Controller Import
+const {updateCourseProgress} = require("../controllers/CourseProgress")
+
 // Rating Controllers Import
 const {
   createRating,
@@ -81,6 +84,11 @@ router.put("/editCourse", auth, isInstructor, editCourse);
 router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses);
 // Delete a Course
 router.delete("/deleteCourse", deleteCourse);
+
+// ********************************************************************************************************
+//                                      Update Course Progress routes (Only by Student)
+// ********************************************************************************************************
+router.post("/updateCourseProgress", auth, isStudent,updateCourseProgress);
 
 // ********************************************************************************************************
 //                                      Category routes (Only by Admin)
